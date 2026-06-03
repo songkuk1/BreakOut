@@ -1,0 +1,245 @@
+#pragma once;
+#pragma comment(lib, "d3d11")
+#pragma comment(lib, "d3dcompiler")
+#include "States/IGameState.h"
+#include "States/MainMenuState.h"
+
+#include <iostream>
+#include <cassert>
+#include "UApp.h"
+
+
+UApp* UApp::Ins = nullptr;
+
+LRESULT	CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+
+	switch (message)
+	{
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		break;
+	default:
+		return DefWindowProc(hwnd, message, wParam, lParam);
+	}
+}
+
+
+
+void UApp::Init(HINSTANCE hInstance)
+{
+	Ins = this;
+
+	InitWindow();
+	InitD3D(hInstance);
+	
+}
+
+void UApp::InitD3D(HINSTANCE hInstance)
+{
+	CreateDeviceAndSwapChain();
+	CreateFrameBuffer();
+	CreateShaders();
+
+
+	ChangeState(new MainMenuState());
+}
+
+void UApp::InitWindow()
+{
+	WCHAR WindowClass[] = L"Break_Out";
+
+	WCHAR Title[] = L"Break Out";
+
+
+	WNDCLASSW wndclass = { 0, WndProc, 0,0,0,0,0,0,0, WindowClass };
+
+	RegisterClassW(&wndclass);
+
+
+	m_mainWindow = CreateWindowExW(0, WindowClass, Title, WS_POPUP | WS_VISIBLE | WS_OVERLAPPEDWINDOW,
+		CW_USEDEFAULT, CW_USEDEFAULT, 1024, 1024,
+		nullptr, nullptr, wndclass.hInstance, nullptr);
+
+	if (m_mainWindow)
+	{
+		ShowWindow(m_mainWindow, SW_SHOW);
+		UpdateWindow(m_mainWindow);
+	}
+}
+
+void UApp::CreateDeviceAndSwapChain()
+{
+	D3D_FEATURE_LEVEL featureLevels[] =
+	{
+		D3D_FEATURE_LEVEL_11_0,
+	};
+
+	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
+
+	swapChainDesc.BufferDesc.Width = 0;
+	swapChainDesc.BufferDesc.Height = 0;
+	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	swapChainDesc.SampleDesc.Count = 1;
+	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	swapChainDesc.BufferCount = 2;
+	swapChainDesc.OutputWindow = m_mainWindow;
+	swapChainDesc.Windowed = TRUE;
+	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+
+	//device,device context, swap chain 생성
+	HRESULT hr = D3D11CreateDeviceAndSwapChain(
+		nullptr,
+		D3D_DRIVER_TYPE_HARDWARE,
+		nullptr,
+		D3D11_CREATE_DEVICE_DEBUG,
+		featureLevels,
+		ARRAYSIZE(featureLevels),
+		D3D11_SDK_VERSION, &swapChainDesc, m_swapChain.GetAddressOf(), m_device.GetAddressOf(), nullptr, m_deviceContext.GetAddressOf());
+
+
+	assert(SUCCEEDED(hr));
+
+	//생성후 스왑체인 정보 가져오기
+	DXGI_SWAP_CHAIN_DESC actualDesc = {};
+	m_swapChain->GetDesc(&actualDesc);
+
+	ViewportInfo = { 0.0f, 0.0f,
+		static_cast<float>(actualDesc.BufferDesc.Width),
+		static_cast<float>(actualDesc.BufferDesc.Height),
+		0.0f, 1.0f };
+
+
+}
+
+void UApp::CreateFrameBuffer()
+{
+	HRESULT hr = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(m_frameBuffer.GetAddressOf()));
+
+	assert(SUCCEEDED(hr));
+
+	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
+	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+
+	hr = m_device->CreateRenderTargetView(m_frameBuffer.Get(), &rtvDesc, m_frameBufferRTV.GetAddressOf());
+
+
+}
+
+void UApp::CreateShaders()
+{
+	ID3DBlob* vertexshaderCSO = nullptr;
+	ID3DBlob* pixelshaderCSO = nullptr;
+
+	//버텍스 쉐이더 생성
+	HRESULT hr = D3DCompileFromFile(L"Shaders/defaultVS.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &vertexshaderCSO, nullptr);
+
+	assert(SUCCEEDED(hr));
+
+	m_device->CreateVertexShader(vertexshaderCSO->GetBufferPointer(), vertexshaderCSO->GetBufferSize(), nullptr, m_vertexShader.GetAddressOf());
+
+
+
+	//픽셀쉐이더 생성
+	hr = D3DCompileFromFile(L"Shaders/defaultPS.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &pixelshaderCSO, nullptr);
+
+	assert(SUCCEEDED(hr));
+
+	m_device->CreatePixelShader(pixelshaderCSO->GetBufferPointer(), pixelshaderCSO->GetBufferSize(), nullptr, m_pixelShader.GetAddressOf());
+
+
+	D3D11_INPUT_ELEMENT_DESC inputElementDesc[] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+
+	hr = m_device->CreateInputLayout(inputElementDesc,
+		ARRAYSIZE(inputElementDesc),
+		vertexshaderCSO->GetBufferPointer(),
+		vertexshaderCSO->GetBufferSize(),
+		simpleInputLayout.GetAddressOf());
+
+	assert(SUCCEEDED(hr));
+
+	vertexshaderCSO->Release();
+	pixelshaderCSO->Release();
+}
+
+void UApp::CreateRasterizerState()
+{
+	D3D11_RASTERIZER_DESC rasterizerDesc = {};
+	rasterizerDesc.CullMode = D3D11_CULL_BACK;
+	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+
+	HRESULT hr = m_device->CreateRasterizerState(&rasterizerDesc, m_rasterizerState.GetAddressOf());
+
+	assert(SUCCEEDED(hr));
+
+
+}
+
+void UApp::ChangeState(IGameState* newState)
+{
+	nextState = newState;
+}
+
+void UApp::mainLoop()
+{
+	Update();
+	Render();
+
+
+
+}
+
+void UApp::Update()
+{
+	if(nextState != nullptr)
+	{
+
+		if(m_currentState != nullptr)
+		{
+			m_currentState->Exit();
+			delete m_currentState;
+		}
+
+		m_currentState = nextState;
+		m_currentState->Enter();
+		nextState = nullptr;
+	}
+
+
+	if(m_currentState != nullptr)
+	{
+
+		m_currentState->Update();
+
+	}
+}
+
+void UApp::Render()
+{
+	m_deviceContext->ClearRenderTargetView(m_frameBufferRTV.Get(), ClearColor);
+
+	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_deviceContext->IASetInputLayout(simpleInputLayout.Get());
+	
+	m_deviceContext->RSSetViewports(1, &ViewportInfo);
+	m_deviceContext->RSSetState(m_rasterizerState.Get());
+
+	m_deviceContext->OMSetRenderTargets(1, m_frameBufferRTV.GetAddressOf(), nullptr);
+
+
+
+	if(m_currentState != nullptr)
+	{
+		m_currentState->Render();
+	}
+
+
+	m_swapChain->Present(1, 0);
+
+
+}
