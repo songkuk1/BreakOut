@@ -24,6 +24,9 @@
     <ClCompile Include="States\MainMenuState.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="UObjectFactory.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UObject.h">
@@ -36,6 +39,24 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="States\MainMenuState.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UObjectFactory.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UVector.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UBall.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UBlock.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UMeshRenderer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UMesh.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

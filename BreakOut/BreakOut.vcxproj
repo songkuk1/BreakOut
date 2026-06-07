@@ -128,12 +128,19 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="States\MainMenuState.cpp" />
     <ClCompile Include="UApp.cpp" />
+    <ClCompile Include="UObjectFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="States\IGameState.h" />
     <ClInclude Include="States\MainMenuState.h" />
     <ClInclude Include="UApp.h" />
+    <ClInclude Include="UBall.h" />
+    <ClInclude Include="UBlock.h" />
+    <ClInclude Include="UMesh.h" />
+    <ClInclude Include="UMeshRenderer.h" />
+    <ClInclude Include="UVector.h" />
     <ClInclude Include="UObject.h" />
+    <ClInclude Include="UObjectFactory.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\defaultPS.hlsl">
