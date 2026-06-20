@@ -7,9 +7,12 @@
 #include <iostream>
 #include <cassert>
 #include "UApp.h"
+#include "D3D11Util.h"
 
 
 UApp* UApp::Ins = nullptr;
+LPCWSTR defaultVSFileName = L"Shaders/defaultVS.hlsl";
+LPCWSTR defaultPSFileName = L"Shaders/defaultPS.hlsl";
 
 LRESULT	CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -129,42 +132,9 @@ void UApp::CreateFrameBuffer()
 
 void UApp::CreateShaders()
 {
-	ID3DBlob* vertexshaderCSO = nullptr;
-	ID3DBlob* pixelshaderCSO = nullptr;
+	D3D11Util::CreateVSAndInputlayout(defaultVSFileName, m_vertexShader, simpleInputLayout);
+	D3D11Util::CreatePS(defaultPSFileName, m_pixelShader);
 
-	//¹öÅØ½º ½¦ÀÌ´õ »ý¼º
-	HRESULT hr = D3DCompileFromFile(L"Shaders/defaultVS.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &vertexshaderCSO, nullptr);
-
-	assert(SUCCEEDED(hr));
-
-	m_device->CreateVertexShader(vertexshaderCSO->GetBufferPointer(), vertexshaderCSO->GetBufferSize(), nullptr, m_vertexShader.GetAddressOf());
-
-
-
-	//ÇÈ¼¿½¦ÀÌ´õ »ý¼º
-	hr = D3DCompileFromFile(L"Shaders/defaultPS.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &pixelshaderCSO, nullptr);
-
-	assert(SUCCEEDED(hr));
-
-	m_device->CreatePixelShader(pixelshaderCSO->GetBufferPointer(), pixelshaderCSO->GetBufferSize(), nullptr, m_pixelShader.GetAddressOf());
-
-
-	D3D11_INPUT_ELEMENT_DESC inputElementDesc[] =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	};
-
-	hr = m_device->CreateInputLayout(inputElementDesc,
-		ARRAYSIZE(inputElementDesc),
-		vertexshaderCSO->GetBufferPointer(),
-		vertexshaderCSO->GetBufferSize(),
-		simpleInputLayout.GetAddressOf());
-
-	assert(SUCCEEDED(hr));
-
-	vertexshaderCSO->Release();
-	pixelshaderCSO->Release();
 }
 
 void UApp::CreateRasterizerState()
@@ -192,6 +162,11 @@ void UApp::mainLoop()
 
 
 
+}
+
+ID3D11Device* UApp::GetDevice()
+{
+	return m_device.Get();
 }
 
 void UApp::Update()

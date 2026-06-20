@@ -1,12 +1,14 @@
 #pragma once
+#include <cstdint>
+#include <initializer_list>
 
 template<typename T>
 class UVector
 {
 private:
 	T* m_data;
-	uint32_t _size;
-	uint32_t _capacity;
+	uint64_t _size;
+	uint64_t _capacity;
 
 public:
 	UVector<T>()
@@ -28,6 +30,15 @@ public:
 	{
 		delete[] m_data;
 	}
+	
+	//리스트 대입초기화
+	UVector& operator=(std::initializer_list<T> list) {
+
+		for (const T& item : list) {
+			push_back(item);
+		}
+		return *this;
+	}
 
 	void push_back(const T& value)
 	{
@@ -46,18 +57,23 @@ public:
 			_size--;
 	}
 
-	T& operator[](const uint32_t index)
+	T& operator[](const uint64_t index)
 	{
 		return m_data[index];
+	}
+
+	size_t size()
+	{
+		return _size;
 	}
 
 
 
 private:
-	void reallocate(const uint32_t newCapacity)
+	void reallocate(const uint64_t newCapacity)
 	{
 		T* newData = new T[newCapacity];
-		for (uint32_t i = 0; i < _size; i++)
+		for (uint64_t i = 0; i < _size; i++)
 			newData[i] = m_data[i];
 		delete[] m_data;
 		m_data = newData;

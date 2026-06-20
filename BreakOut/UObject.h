@@ -4,6 +4,8 @@
 
 class UObject
 {
+
+
 	std::unique_ptr<UMeshRenderer> m_meshRenderer;
 
 

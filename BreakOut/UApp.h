@@ -9,6 +9,7 @@ class IGameState;
 using Microsoft::WRL::ComPtr;
 
 
+
 class UApp
 {
 public:
@@ -43,6 +44,7 @@ public:
 	void ChangeState(IGameState* newState);
 
 	void mainLoop();
+	ID3D11Device* GetDevice();
 
 	void Update();
 	void Render();

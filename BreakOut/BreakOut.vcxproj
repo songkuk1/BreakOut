@@ -102,7 +102,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)States</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)States;$(ProjectDir)Third-party\DirectXTK\Includes</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -117,7 +117,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)States</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)States;$(ProjectDir)Third-party\DirectXTK\Includes</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -125,12 +125,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="D3D11Util.cpp" />
+    <ClCompile Include="GeometryGenerator.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="States\MainMenuState.cpp" />
     <ClCompile Include="UApp.cpp" />
     <ClCompile Include="UObjectFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="D3D11Util.h" />
+    <ClInclude Include="GeometryGenerator.h" />
+    <ClInclude Include="FMeshData.h" />
     <ClInclude Include="States\IGameState.h" />
     <ClInclude Include="States\MainMenuState.h" />
     <ClInclude Include="UApp.h" />
@@ -138,9 +143,11 @@
     <ClInclude Include="UBlock.h" />
     <ClInclude Include="UMesh.h" />
     <ClInclude Include="UMeshRenderer.h" />
+    <ClInclude Include="UPlayer.h" />
     <ClInclude Include="UVector.h" />
     <ClInclude Include="UObject.h" />
     <ClInclude Include="UObjectFactory.h" />
+    <ClInclude Include="FVertex.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\defaultPS.hlsl">
