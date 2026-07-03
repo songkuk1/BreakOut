@@ -1,22 +1,43 @@
-#pragma once;
+#pragma once
 #pragma comment(lib, "d3d11")
 #pragma comment(lib, "d3dcompiler")
 #include "States/IGameState.h"
 #include "States/MainMenuState.h"
+#include "States/InGameState.h"
 
 #include <iostream>
 #include <cassert>
 #include "UApp.h"
+#include "FMeshData.h"
 #include "D3D11Util.h"
+#include "GeometryGenerator.h"
+#include "ConstantData.h"
+
+
+#include "SoundManager.h"
+#include "Time.h"
+#include "InputManager.h"
+
+
+
+#include "../Third-party/ImGui/imgui.h"
+#include "../Third-party/ImGui/imgui_internal.h"
+#include "../Third-party/ImGui/imgui_impl_dx11.h"
+#include "../Third-party/ImGui/imgui_impl_win32.h"
 
 
 UApp* UApp::Ins = nullptr;
 LPCWSTR defaultVSFileName = L"Shaders/defaultVS.hlsl";
 LPCWSTR defaultPSFileName = L"Shaders/defaultPS.hlsl";
 
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 LRESULT	CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-
+	if (ImGui_ImplWin32_WndProcHandler(hwnd, message, wParam, lParam))
+	{
+		return true;
+	}
 	switch (message)
 	{
 	case WM_DESTROY:
@@ -35,7 +56,16 @@ void UApp::Init(HINSTANCE hInstance)
 
 	InitWindow();
 	InitD3D(hInstance);
+	InitImgui();
+	//필요한 데이터 불러오기
+	Loading();
+
+	//타이머 초기화
+	Time::GetInstance()->Init();
+	SoundManager::GetInstance()->Init();
 	
+	//게임 시작시 메인 메뉴부터
+	ChangeState(new MainMenuState());
 }
 
 void UApp::InitD3D(HINSTANCE hInstance)
@@ -44,8 +74,15 @@ void UApp::InitD3D(HINSTANCE hInstance)
 	CreateFrameBuffer();
 	CreateShaders();
 
+	// Create Constant Buffer
+	D3D11_BUFFER_DESC constantbufferdesc = {};
+	constantbufferdesc.ByteWidth = sizeof(VertexConstantData);
+	constantbufferdesc.Usage = D3D11_USAGE_DYNAMIC;
+	constantbufferdesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	constantbufferdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
-	ChangeState(new MainMenuState());
+	m_device->CreateBuffer(&constantbufferdesc, nullptr, &TransformCBuffer);
+	
 }
 
 void UApp::InitWindow()
@@ -69,6 +106,33 @@ void UApp::InitWindow()
 		ShowWindow(m_mainWindow, SW_SHOW);
 		UpdateWindow(m_mainWindow);
 	}
+}
+
+void UApp::InitImgui()
+{
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+
+	ImGuiIO& io = ImGui::GetIO();
+	io.Fonts->AddFontFromFileTTF("Resources/NanumGothic-Bold.ttf", 24.0f, nullptr, io.Fonts->GetGlyphRangesKorean());
+
+	// ImGui 백엔드 초기화
+	ImGui_ImplWin32_Init((void*)m_mainWindow);
+	ImGui_ImplDX11_Init(m_device.Get(), m_deviceContext.Get());
+
+
+
+}
+
+void UApp::Loading()
+{
+	FMeshData cubeData = GeometryGenerator::MakeCube();
+	cubeMesh = new UMesh(cubeData);
+
+	FMeshData sphereData = GeometryGenerator::MakeSphere(1.0f,20,20);
+	sphereMesh = new UMesh(sphereData);
+
+	
 }
 
 void UApp::CreateDeviceAndSwapChain()
@@ -171,6 +235,11 @@ ID3D11Device* UApp::GetDevice()
 
 void UApp::Update()
 {
+	Time::GetInstance()->Update();
+	InputManager::GetInstance()->Update();
+
+	double deltaTime = Time::GetInstance()->GetDeltaTime();
+
 	if(nextState != nullptr)
 	{
 
@@ -189,7 +258,7 @@ void UApp::Update()
 	if(m_currentState != nullptr)
 	{
 
-		m_currentState->Update();
+		m_currentState->Update(deltaTime);
 
 	}
 }
@@ -206,14 +275,19 @@ void UApp::Render()
 
 	m_deviceContext->OMSetRenderTargets(1, m_frameBufferRTV.GetAddressOf(), nullptr);
 
+	m_deviceContext->VSSetConstantBuffers(0, 1, TransformCBuffer.GetAddressOf());
 
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
 
 	if(m_currentState != nullptr)
 	{
 		m_currentState->Render();
 	}
 
-
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 	m_swapChain->Present(1, 0);
 
 

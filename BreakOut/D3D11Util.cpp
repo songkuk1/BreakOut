@@ -5,7 +5,7 @@
 void D3D11Util::CreateVSAndInputlayout(const LPCWSTR& fileName, ComPtr<ID3D11VertexShader>& vertexShader, ComPtr<ID3D11InputLayout>& inputLayout)
 {
 	ID3DBlob* vertexshaderCSO = nullptr;
-
+	ID3DBlob* errorBlob = nullptr;
 	//버텍스 쉐이더 생성
 	HRESULT hr = D3DCompileFromFile(fileName, nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &vertexshaderCSO,nullptr);
 

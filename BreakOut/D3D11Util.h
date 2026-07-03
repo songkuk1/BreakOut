@@ -16,7 +16,15 @@ public:
 
     static void CreatePS(const LPCWSTR& fileName, ComPtr<ID3D11PixelShader>& pixelShader);
 
+	template<typename T>
+	static void UpdateConstantBuffer(ID3D11DeviceContext* context, ID3D11Buffer* cBuffer, T& cBufferData)
+	{
+		D3D11_MAPPED_SUBRESOURCE constantbufferMSR;
+		context->Map(cBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &constantbufferMSR);
+		memcpy(constantbufferMSR.pData, &cBufferData, sizeof(T));
 
+		context->Unmap(cBuffer, 0);
+	}
 
 
 

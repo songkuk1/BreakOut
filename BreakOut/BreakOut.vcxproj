@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -103,6 +103,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)States;$(ProjectDir)Third-party\DirectXTK\Includes</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -118,6 +119,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)States;$(ProjectDir)Third-party\DirectXTK\Includes</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -127,17 +129,54 @@
   <ItemGroup>
     <ClCompile Include="D3D11Util.cpp" />
     <ClCompile Include="GeometryGenerator.cpp" />
+    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PhysicsComponent.cpp" />
+    <ClCompile Include="Rect.cpp" />
+    <ClCompile Include="States\InGameState.cpp" />
+    <ClCompile Include="States\InGameState.h" />
     <ClCompile Include="States\MainMenuState.cpp" />
+    <ClCompile Include="States\ResultState.cpp" />
+    <ClCompile Include="SoundManager.cpp" />
+    <ClCompile Include="Third-party\Imgui\imgui.cpp" />
+    <ClCompile Include="Third-party\Imgui\imgui_demo.cpp" />
+    <ClCompile Include="Third-party\Imgui\imgui_draw.cpp" />
+    <ClCompile Include="Third-party\Imgui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="Third-party\Imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="Third-party\Imgui\imgui_tables.cpp" />
+    <ClCompile Include="Third-party\Imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Time.cpp" />
     <ClCompile Include="UApp.cpp" />
+    <ClCompile Include="UBall.cpp" />
+    <ClCompile Include="UBlock.cpp" />
+    <ClCompile Include="UMesh.cpp" />
+    <ClCompile Include="UMeshRenderer.cpp" />
+    <ClCompile Include="UObject.cpp" />
     <ClCompile Include="UObjectFactory.cpp" />
+    <ClCompile Include="UPlayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D3D11Util.h" />
     <ClInclude Include="GeometryGenerator.h" />
     <ClInclude Include="FMeshData.h" />
+    <ClInclude Include="FTransform.h" />
+    <ClInclude Include="InputManager.h" />
+    <ClInclude Include="PhysicsComponent.h" />
+    <ClInclude Include="Rect.h" />
     <ClInclude Include="States\IGameState.h" />
     <ClInclude Include="States\MainMenuState.h" />
+    <ClInclude Include="ConstantData.h" />
+    <ClInclude Include="States\ResultState.h" />
+    <ClInclude Include="SoundManager.h" />
+    <ClInclude Include="Third-party\Imgui\imconfig.h" />
+    <ClInclude Include="Third-party\Imgui\imgui.h" />
+    <ClInclude Include="Third-party\Imgui\imgui_impl_dx11.h" />
+    <ClInclude Include="Third-party\Imgui\imgui_impl_win32.h" />
+    <ClInclude Include="Third-party\Imgui\imgui_internal.h" />
+    <ClInclude Include="Third-party\Imgui\imstb_rectpack.h" />
+    <ClInclude Include="Third-party\Imgui\imstb_textedit.h" />
+    <ClInclude Include="Third-party\Imgui\imstb_truetype.h" />
+    <ClInclude Include="Time.h" />
     <ClInclude Include="UApp.h" />
     <ClInclude Include="UBall.h" />
     <ClInclude Include="UBlock.h" />

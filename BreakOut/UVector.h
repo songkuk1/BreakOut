@@ -67,6 +67,16 @@ public:
 		return _size;
 	}
 
+	const T* data() { return m_data;  };
+
+	void Clear()
+	{
+		for(int i =0; i < _size; ++i)
+		{
+			m_data[i] = nullptr;
+		}
+		_size = 0;
+	}
 
 
 private:

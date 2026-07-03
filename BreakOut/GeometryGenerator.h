@@ -8,8 +8,8 @@ class MeshData;
 class GeometryGenerator
 {
 public:
-	static FMeshData MakeRectangle();
-	//static FMeshData MakeCircle();
+	static FMeshData MakeCube();
+	static FMeshData MakeSphere(float radius, int sliceCount, int stackCount);
 	
 
 
