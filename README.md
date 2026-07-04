@@ -6,6 +6,7 @@
 ## 목차
 1.[프로젝트 소개](#프로젝트-소개)
 
+2.[구성 클래스](#구성-클래스)
 
 
 ## 프로젝트 소개
@@ -35,14 +36,15 @@ win32,Directx11 등을 초기화하고 메인 루프가 돌아가는 곳
 도형의 메시데이터를 생성하는 클래스, 정육면체와 구 데이터를 생성할 수 있음
 
 구 데이터의 경우, 회전을 이용하여 생성하는 방식이다.
+
 1)원점을 기준으로 radius만큼 아래에 남극점을 찍는다.
 <img width="862" height="698" alt="image" src="https://github.com/user-attachments/assets/0cdbd85e-fe46-46ab-b9d0-52cd166be8a3" />
 
 2)원점을 기준으로 z축 회전을하여, 북극점까지의 자오선을 긋는다.
-<img width="1200" height="718" alt="image" src="https://github.com/user-attachments/assets/88634d84-e8d6-4fe3-9530-f5c1bbda0da3" />
+<img width="862" height="698" alt="image" src="https://github.com/user-attachments/assets/88634d84-e8d6-4fe3-9530-f5c1bbda0da3" />
 
-3)자오선에 있는 점을 y축 회전시키면 구가 만들어진다.
-<img width="400" height="226" alt="SphereGenerate" src="https://github.com/user-attachments/assets/cac08455-58e5-44a3-939a-225d9271051f" />
+3)자오선에 있는 점들을 y축 회전시키면 구가 만들어진다.
+<img width="862" height="698" alt="SphereGenerate" src="https://github.com/user-attachments/assets/cac08455-58e5-44a3-939a-225d9271051f" />
 
 점들을 많이 설정할수록 완벽한 구에 가까워진다.
 
@@ -77,6 +79,11 @@ Object에 속하는 클래스
 
 8-1.PhysicsComponent 
 각종 물리 처리를 담당하는 클래스
+
+충돌은 AABB충돌 감지로 처리하였다. 간단한 방법이기도하고 이 게임엔 물체가 회전하지 않아서 정밀한 검사가 필요하진 않다고 판단했다.
+공식은 다음과 같다.
+<img width="1167" height="66" alt="image" src="https://github.com/user-attachments/assets/5c58711e-9edd-4c65-a34a-87e25b811bb5" />
+이미지 출처 : https://forsave.tistory.com/148
 
 8-2.MeshRenderer
 메시 렌더링을 담당하는 클래스
