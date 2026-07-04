@@ -38,18 +38,22 @@ win32,Directx11 등을 초기화하고 메인 루프가 돌아가는 곳
 구 데이터의 경우, 회전을 이용하여 생성하는 방식이다.
 
 1)원점을 기준으로 radius만큼 아래에 남극점을 찍는다.
-<img width="862" height="698" alt="image" src="https://github.com/user-attachments/assets/0cdbd85e-fe46-46ab-b9d0-52cd166be8a3" />
+
+<img width="500" height="350" alt="image" src="https://github.com/user-attachments/assets/0cdbd85e-fe46-46ab-b9d0-52cd166be8a3" />
 
 2)원점을 기준으로 z축 회전을하여, 북극점까지의 자오선을 긋는다.
-<img width="862" height="698" alt="image" src="https://github.com/user-attachments/assets/88634d84-e8d6-4fe3-9530-f5c1bbda0da3" />
+
+<img width="500" height="350" alt="image" src="https://github.com/user-attachments/assets/88634d84-e8d6-4fe3-9530-f5c1bbda0da3" />
 
 3)자오선에 있는 점들을 y축 회전시키면 구가 만들어진다.
-<img width="862" height="698" alt="SphereGenerate" src="https://github.com/user-attachments/assets/cac08455-58e5-44a3-939a-225d9271051f" />
+
+<img width="500" height="350" alt="SphereGenerate" src="https://github.com/user-attachments/assets/cac08455-58e5-44a3-939a-225d9271051f" />
 
 점들을 많이 설정할수록 완벽한 구에 가까워진다.
 
 6.IGameState
 게임은 "state"로 구성되어있음 
+
 1)MainMenuState : 게임 시작시 처음 등장하는 상태
 <img width="995" height="958" alt="image" src="https://github.com/user-attachments/assets/7722aa45-2fd0-4b39-a4cc-1d067ab08272" />
 
